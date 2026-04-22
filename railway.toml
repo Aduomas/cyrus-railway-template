@@ -1,0 +1,26 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+# Cyrus has no documented health endpoint; skip strict healthchecks to avoid
+# restart loops while the operator is still completing OAuth / repo setup.
+healthcheckTimeout = 300
+
+# Cyrus persists config, OAuth tokens, and cloned repos under $HOME/.cyrus.
+# The Dockerfile sets HOME=/data, so the volume must mount there.
+requiredMountPath = "/data"
+
+[variables]
+# --- Required: set these before first deploy ---
+# LINEAR_CLIENT_ID = ""
+# LINEAR_CLIENT_SECRET = ""
+# LINEAR_WEBHOOK_SECRET = ""
+# ANTHROPIC_API_KEY = ""
+
+# --- Recommended defaults ---
+LINEAR_DIRECT_WEBHOOKS = "true"
+
+# CYRUS_BASE_URL is auto-derived from RAILWAY_PUBLIC_DOMAIN by entrypoint.sh.
+# Override here only if you're fronting Cyrus with a custom domain.
+# CYRUS_BASE_URL = "https://cyrus.yourdomain.com"
